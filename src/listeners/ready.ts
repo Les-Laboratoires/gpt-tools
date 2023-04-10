@@ -1,5 +1,5 @@
 import { client } from "../app/client.js"
 
-client.on("ready", (client) => {
+client.once("ready", (client) => {
   console.log(`Logged in as ${client.user.tag}!`)
 })

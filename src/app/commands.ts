@@ -9,19 +9,26 @@ commandHandler.on(
   (file) => import("file://" + path.join(process.cwd(), file))
 )
 
-export const commands = new discord.Collection<string, Command>()
+export const commands = new discord.Collection<string, Command<any>>()
 
-export class Command {
-  constructor(
-    public name: string,
-    public aliases: string[],
-    public run: (message: discord.Message) => void
-  ) {
-    commands.set(name, this)
+export interface CommandOptions<InGuild extends boolean> {
+  name: string
+  inGuild: InGuild
+  aliases?: string[]
+  run: (
+    message: discord.Message<InGuild>,
+    parts: string[],
+    called: boolean
+  ) => void
+}
+
+export class Command<InGuild extends boolean> {
+  constructor(public options: CommandOptions<InGuild>) {
+    commands.set(options.name, this)
   }
 
   public match(name: string) {
-    return this.name === name || this.aliases.includes(name)
+    return this.options.name === name || !!this.options.aliases?.includes(name)
   }
 }
 
