@@ -1,12 +1,13 @@
 import * as discord from "discord.js"
+import * as guilds from "../utils/guilds.js"
 import * as tracker from "../utils/tracker.js"
-import { client } from "../app/client.js"
-import guilds from "../tables/guilds.js"
+import { Listener } from "../app/listeners.js"
 
-client.on("guildMemberAdd", async (member) => {
-  const guildConfig = await guilds.query.where("id", member.guild.id).first()
+new Listener({
+  event: "guildMemberAdd",
+  run: async (member) => {
+    const guildConfig = await guilds.ensure(member.guild.id)
 
-  if (guildConfig) {
     // TRACKER
     if (guildConfig.trackerCategory) {
       const trackerCategory = await member.guild.channels.fetch(
@@ -15,7 +16,7 @@ client.on("guildMemberAdd", async (member) => {
 
       if (trackerCategory) {
         if (trackerCategory.type === discord.ChannelType.GuildCategory) {
-          await tracker.updateTracker(trackerCategory)
+          await tracker.updateTracker(trackerCategory, guildConfig)
         }
       }
     }
@@ -26,5 +27,5 @@ client.on("guildMemberAdd", async (member) => {
       }
     } else if (guildConfig.userArriveMessage) {
     }
-  }
+  },
 })

@@ -3,6 +3,7 @@ import { Table } from "@ghom/orm"
 export interface GuildTable {
   id: string
   prefix: string
+  messageCount: number
   arriveMessageChannel?: string
   leaveMessageChannel?: string
   userArriveMessage: string
@@ -22,6 +23,7 @@ export default new Table<GuildTable>({
   setup: (table) => {
     table.string("id").primary()
     table.string("prefix").defaultTo("!")
+    table.integer("messageCount").defaultTo(0)
     table.string("arriveMessageChannel").nullable()
     table.string("leaveMessageChannel").nullable()
     table.string("userArriveMessage").defaultTo("Bienvenue $user !")

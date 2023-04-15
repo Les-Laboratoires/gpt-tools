@@ -1,13 +1,20 @@
 import path from "path"
+import chalk from "chalk"
 import * as discord from "discord.js"
-import * as handler from "@ghom/handler"
+import { Handler } from "@ghom/handler"
+import { Logger } from "@ghom/logger"
 
-const commandHandler = new handler.Handler("dist/commands")
+const commandHandler = new Handler("dist/commands")
+const commandLogger = new Logger({
+  section: "Commands",
+})
 
-commandHandler.on(
-  "load",
-  (file) => import("file://" + path.join(process.cwd(), file))
-)
+commandHandler.on("load", (file) => {
+  commandLogger.log(
+    `loaded command ${chalk.blueBright(path.basename(file, ".js"))}`
+  )
+  return import("file://" + path.join(process.cwd(), file))
+})
 
 export const commands = new discord.Collection<string, Command<any>>()
 

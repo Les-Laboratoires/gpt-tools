@@ -1,6 +1,6 @@
 import * as openai from "openai"
 import * as discord from "discord.js"
-import { client } from "../app/openai.js"
+import { gpt } from "../app/openai.js"
 import { Command } from "../app/commands.js"
 
 new Command({
@@ -20,7 +20,7 @@ new Command({
         (msg.author.id !== message.client.user.id && msg.author.bot)
     )
 
-    const result = await client.createChatCompletion({
+    const result = await gpt.createChatCompletion({
       model: process.env.MODEL ?? "gpt-3.5-turbo",
       messages: [
         {
