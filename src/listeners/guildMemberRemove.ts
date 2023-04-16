@@ -4,31 +4,31 @@ import * as arriveLeave from "../utils/arriveLeave.js"
 import { Listener } from "../app/listeners.js"
 
 new Listener({
-  event: "guildMemberAdd",
+  event: "guildMemberRemove",
   run: async (member) => {
     const guildConfig = await guilds.ensureGuild(member.guild.id)
 
-    if (!guildConfig.arriveMessageChannel) return
+    if (!guildConfig.leaveMessageChannel) return
 
     const channel = member.guild.channels.cache.get(
-      guildConfig.arriveMessageChannel
+      guildConfig.leaveMessageChannel
     )
 
     if (channel?.type !== discord.ChannelType.GuildText) {
-      await guilds.removeData(member.guild.id, "arriveMessageChannel")
+      await guilds.removeData(member.guild.id, "leaveMessageChannel")
       return
     }
 
-    // WELCOME
+    // BYE
     if (member.user.bot) {
-      if (guildConfig.botArriveMessage) {
+      if (guildConfig.botLeaveMessage) {
         await channel.send(
-          arriveLeave.buildMessage(guildConfig.botArriveMessage, member)
+          arriveLeave.buildMessage(guildConfig.botLeaveMessage, member)
         )
       }
-    } else if (guildConfig.userArriveMessage) {
+    } else if (guildConfig.userLeaveMessage) {
       await channel.send(
-        arriveLeave.buildMessage(guildConfig.userArriveMessage, member)
+        arriveLeave.buildMessage(guildConfig.userLeaveMessage, member)
       )
     }
   },

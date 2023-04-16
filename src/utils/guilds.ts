@@ -1,6 +1,6 @@
 import guilds, { GuildTable } from "../tables/guilds.js"
 
-export async function ensure(id: string): Promise<GuildTable> {
+export async function ensureGuild(id: string): Promise<GuildTable> {
   const guild = await guilds.query.where("id", id).first()
 
   if (guild) {
@@ -11,6 +11,13 @@ export async function ensure(id: string): Promise<GuildTable> {
 }
 
 export async function addMessage(id: string): Promise<void> {
-  await ensure(id)
+  await ensureGuild(id)
   await guilds.query.where("id", id).increment("messageCount", 1)
+}
+
+export async function removeData(
+  id: string,
+  key: keyof GuildTable
+): Promise<void> {
+  await guilds.query.where("id", id).update({ [key]: null })
 }

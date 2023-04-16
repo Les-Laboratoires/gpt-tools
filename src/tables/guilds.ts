@@ -4,18 +4,21 @@ export interface GuildTable {
   id: string
   prefix: string
   messageCount: number
-  arriveMessageChannel?: string
-  leaveMessageChannel?: string
+  arriveMessageChannel: string | null
+  leaveMessageChannel: string | null
   userArriveMessage: string
   botArriveMessage: string
   userLeaveMessage: string
   botLeaveMessage: string
-  userDefaultRole?: string
-  botDefaultRole?: string
-  trackerCategory?: string
+  userDefaultRole: string | null
+  botDefaultRole: string | null
+  trackerCategory: string | null
   memberTrackerPattern: string
   onlineTrackerPattern: string
   messageTrackerPattern: string
+  lastMemberCount: number
+  lastOnlineCount: number
+  lastMessageCount: number
 }
 
 export default new Table<GuildTable>({
@@ -36,5 +39,8 @@ export default new Table<GuildTable>({
     table.string("memberTrackerPattern").defaultTo("📈｜$count membres")
     table.string("onlineTrackerPattern").defaultTo("🟢｜$count connectés")
     table.string("messageTrackerPattern").defaultTo("📨｜$count messages")
+    table.integer("lastMemberCount").defaultTo(0)
+    table.integer("lastOnlineCount").defaultTo(0)
+    table.integer("lastMessageCount").defaultTo(0)
   },
 })
