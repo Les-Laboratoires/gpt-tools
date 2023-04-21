@@ -3,30 +3,22 @@ import chalk from "chalk"
 import { Handler } from "@ghom/handler"
 import { Logger } from "@ghom/logger"
 
-const entityHandler = new Handler("dist/entities")
-const entityLogger = new Logger({ section: "Entities" })
-
-entityHandler.on("load", (file) => {
-  entityLogger.log(
-    `loaded entity ${chalk.blueBright(path.basename(file, ".js"))}`
-  )
-  return import("file://" + path.join(process.cwd(), file))
+const handler = new Handler("dist/entities", {
+  logger: new Logger({ section: "Entities" }),
+  loggerPattern: `loaded entity ${chalk.blueBright("$filename")}`,
+  loader: filepath => import("file://" + filepath)
 })
 
-export const entities: Entity[] = []
+export const entities = handler.elements
 
 export abstract class Entity {
   abstract init(): void | Promise<void>
-
-  constructor(public readonly name: string) {
-    entities.push(this)
-  }
 }
 
 export default async () => {
-  await entityHandler.load()
+  await handler.init()
 
-  for (const entity of entities) {
+  for (const [, entity] of entities) {
     await entity.init()
   }
 }
