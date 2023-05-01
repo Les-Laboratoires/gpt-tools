@@ -13,7 +13,7 @@ new Command({
 
     await message.channel.sendTyping()
 
-    const lastMessages = await message.channel.messages.fetch({ limit: 20 })
+    const lastMessages = await message.channel.messages.fetch({ limit: 3 })
     const usedMessages = lastMessages.filter(
       (msg) =>
         msg.system ||

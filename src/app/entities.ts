@@ -6,7 +6,7 @@ import { Logger } from "@ghom/logger"
 const handler = new Handler("dist/entities", {
   logger: new Logger({ section: "Entities" }),
   loggerPattern: `loaded entity ${chalk.blueBright("$filename")}`,
-  loader: filepath => import("file://" + filepath)
+  loader: async (filepath) => import("file://" + filepath),
 })
 
 export const entities = handler.elements

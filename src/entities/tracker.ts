@@ -1,8 +1,8 @@
 import cron from "node-cron"
 import discord from "discord.js"
-import { Entity } from "../app/entities"
-import { client } from "../app/client"
-import guildTable, { GuildTable } from "../tables/guilds"
+import { Entity } from "../app/entities.js"
+import { client } from "../app/client.js"
+import guildTable, { GuildTable } from "../tables/guilds.js"
 
 export interface TrackerValues {
   memberCount: number
@@ -13,49 +13,49 @@ export interface TrackerValues {
 class Tracker extends Entity {
   async init() {
     // Update all trackers every 10 minutes if a change has been made
-    cron.schedule("*/10 * * * *", this.updateAllTrackers.bind(this))
+    // cron.schedule("*/10 * * * *", this.updateAllTrackers.bind(this))
   }
 
   async updateAllTrackers() {
-    const guildConfigs = await this.getTrackedGuilds()
-
-    for (const guildConfig of guildConfigs) {
-      const guild = client.guilds.cache.get(guildConfig.id)
-
-      if (!guild) {
-        await guildTable.query.where("id", guildConfig.id).delete()
-        continue
-      }
-
-      const category = await client.channels.fetch(guildConfig.trackerCategory)
-
-      if (!category || category.type !== discord.ChannelType.GuildCategory) {
-        await guildTable.query
-          .where("id", guildConfig.id)
-          .update({ trackerCategory: null })
-        continue
-      }
-
-      const members = await guild.members.fetch({
-        withPresences: true,
-      })
-
-      const values = await this.resolveTrackerValues(
-        category,
-        guildConfig,
-        members
-      )
-
-      if (
-        values.memberCount === guildConfig.lastMemberCount &&
-        values.onlineCount === guildConfig.lastOnlineCount &&
-        values.messageCount === guildConfig.lastMessageCount
-      ) {
-        continue
-      }
-
-      await this.updateTrackerCategory(category, guildConfig, values)
-    }
+    // const guildConfigs = await this.getTrackedGuilds()
+    //
+    // for (const guildConfig of guildConfigs) {
+    //   const guild = client.guilds.cache.get(guildConfig.id)
+    //
+    //   if (!guild) {
+    //     await guildTable.query.where("id", guildConfig.id).delete()
+    //     continue
+    //   }
+    //
+    //   const category = await client.channels.fetch(guildConfig.trackerCategory)
+    //
+    //   if (!category || category.type !== discord.ChannelType.GuildCategory) {
+    //     await guildTable.query
+    //       .where("id", guildConfig.id)
+    //       .update({ trackerCategory: null })
+    //     continue
+    //   }
+    //
+    //   const members = await guild.members.fetch({
+    //     withPresences: true,
+    //   })
+    //
+    //   const values = await this.resolveTrackerValues(
+    //     category,
+    //     guildConfig,
+    //     members
+    //   )
+    //
+    //   if (
+    //     values.memberCount === guildConfig.lastMemberCount &&
+    //     values.onlineCount === guildConfig.lastOnlineCount &&
+    //     values.messageCount === guildConfig.lastMessageCount
+    //   ) {
+    //     continue
+    //   }
+    //
+    //   await this.updateTrackerCategory(category, guildConfig, values)
+    // }
   }
 
   getTrackedGuilds(): Promise<(GuildTable & { trackerCategory: string })[]> {
@@ -134,4 +134,4 @@ class Tracker extends Entity {
   }
 }
 
-export default new Tracker("tracker")
+export default new Tracker()
