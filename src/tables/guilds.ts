@@ -19,6 +19,7 @@ export interface GuildTable {
   lastMemberCount: number
   lastOnlineCount: number
   lastMessageCount: number
+  elderRoles: string
 }
 
 export default new Table<GuildTable>({
@@ -42,5 +43,6 @@ export default new Table<GuildTable>({
     table.integer("lastMemberCount").defaultTo(0)
     table.integer("lastOnlineCount").defaultTo(0)
     table.integer("lastMessageCount").defaultTo(0)
+    table.json("elderRoles").defaultTo("{}")
   },
 })
